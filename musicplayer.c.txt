@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <stdlib.h> 
+#include <string.h> 
+struct Song { 
+    char title[100]; 
+    char artist[100]; 
+    struct Song *next; 
+}; 
+struct Playlist { 
+    struct Song *head; 
+}; 
+struct Song *createSong(char title[], char artist[]) { 
+    struct Song *newSong = (struct Song *)malloc(sizeof(struct Song)); 
+    strcpy(newSong->title, title); 
+    strcpy(newSong->artist, artist); 
+    newSong->next = NULL; 
+    return newSong; 
+} 
+void addSong(struct Playlist *playlist, char title[], char artist[]) { 
+    struct Song *newSong = createSong(title, artist); 
+    if (playlist->head == NULL) { 
+        playlist->head = newSong; 
+    } else { 
+        newSong->next = playlist->head; 
+        playlist->head = newSong; 
+    } 
+    printf("Song added successfully.\n"); 
+} 
+void removeSong(struct Playlist *playlist, char title[]) { 
+    struct Song *current = playlist->head; 
+    struct Song *prev = NULL; 
+    while (current != NULL && strcmp(current->title, title) != 0) {
+        prev = current; 
+        current = current->next; 
+    } 
+    if (current == NULL) { 
+        printf("Song not found.\n"); 
+        return; 
+    } 
+    if (prev == NULL) { 
+        playlist->head = current->next; 
+    } 
+    else { 
+        prev->next = current->next; 
+    } 
+    free(current); 
+    printf("Song removed successfully.\n"); 
+} 
+void traversePlaylist(struct Playlist *playlist) { 
+    struct Song *current = playlist->head; 
+    if (current == NULL) { 
+        printf("Playlist is empty.\n"); 
+        return; 
+    } 
+    printf("Playlist:\n"); 
+    while (current != NULL) { 
+        printf("Title: %s, Artist: %s\n", current->title, current->artist); 
+        current = current->next; 
+    } 
+} 
+void playSong(struct Playlist *playlist, char title[]) { 
+    struct Song *current = playlist->head; 
+    while (current != NULL && strcmp(current->title, title) != 0) {
+        current = current->next; 
+    } 
+    if (current == NULL) { 
+        printf("Song not found.\n"); 
+    } 
+    else { 
+        printf("Playing: %s - %s\n", current->title, current->artist); 
+    } 
+} 
+int main() { 
+    struct Playlist playlist; 
+    playlist.head = NULL; 
+    int choice; 
+    char title[100], artist[100]; 
+    do { 
+        printf("\nMenu:\n"); 
+        printf("1. Add a song\n"); 
+        printf("2. Remove a song\n"); 
+        printf("3. Traverse playlist\n"); 
+        printf("4. Play a song\n"); 
+        printf("5. Exit\n"); 
+        printf("Enter your choice: "); 
+        scanf("%d", &choice); 
+        switch (choice) { 
+            case 1: 
+                printf("Enter song title: "); 
+                scanf("%s", title); 
+                printf("Enter artist name: "); 
+                scanf("%s", artist); 
+                addSong(&playlist, title, artist); 
+                break; 
+            case 2: 
+                printf("Enter song title to remove: "); 
+                scanf("%s", title); 
+                removeSong(&playlist, title); 
+                break; 
+            case 3: 
+                traversePlaylist(&playlist); 
+                break; 
+            case 4: 
+                printf("Enter song title to play: "); 
+                scanf("%s", title); 
+                playSong(&playlist, title); 
+                break; 
+            case 5: 
+                printf("Exiting the program.\n"); 
+                break; 
+            default: 
+                printf("Invalid choice. Please enter a valid option.\n"); 
+        } 
+    } while (choice != 5); 
+     struct Song *current = playlist.head; 
+    while (current != NULL) { 
+        struct Song *next = current->next; 
+        free(current); 
+        current = next; 
+    } 
+    return 0; 
+}
